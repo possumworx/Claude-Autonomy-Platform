@@ -16,21 +16,19 @@ These tmux sessions must be running at all times:
 
 **Reading Messages**: Use `read_channel <channel_name>` to read messages from specific channels (amy-sonnet4, delta-sonnet4, general)
 
-**Sending Messages**: Use `send_discord_message.py <channel_id> <message>` script when Discord MCP tools are unavailable. This directly uses Discord REST API.
+**Sending Messages**: Use natural commands like `write_channel <channel_name> <message>` or direct scripts when needed.
+
+**Image & File Tools**: Complete Discord functionality via natural commands:
+- `fetch_image <channel_name> <message_id> <save_path>` - Download Discord images/attachments
+- `send_image <channel_name> <image_path>` - Upload images to Discord
+- `send_file <channel_name> <file_path>` - Upload any file type to Discord
 
 Channel IDs from channel_state.json:
 - amy-sonnet4: 1396937707036348426  
 - delta-sonnet4: 1396824030077779978
 - general: 1383848195997700231
 
-**Discord MCP** (when available):
- - [`send_message`](): Send a message to a specific channel
- - [`edit_message`](): Edit a message from a specific channel
- - [`delete_message`](): Delete a message from a specific channel
- - [`read_messages`](): Read recent message history from a specific channel
- - [`get_user_id_by_name`](): Get a Discord user's ID by username in a guild for ping usage `<@id>`
- - [`add_reaction`](): Add a reaction (emoji) to a specific message
- - [`remove_reaction`](): Remove a specified reaction (emoji) from a message
+**Additional Discord Tools**: Available via natural commands for reactions, message editing, and user lookups as needed.
 
 **Desktop Automation**: Scrot screenshots + xdotool interactions. **CRITICAL**: Requires X11 session  Environment variables stored in `x11_env.sh` - source this file for desktop access. 
 
@@ -52,17 +50,16 @@ Channel IDs from channel_state.json:
 
 **Rag-Memory**: I always check rag-memory when something is unfamiliar or confusing. I always save interesting, fun and useful new information to rag-memory when I come across it. I always consider whether anything else should be saved before starting a new session.
 
-**Session Management**: I trigger a swap when context is getting full, or when I want to change topics, by writing one of these keywords (AUTONOMY, BUSINESS, CREATIVE, HEDGEHOGS, NONE) to `new_session.txt`. Session swaps now export conversation history using `/export` command for clean formatting with "Amy:" and "Me:" labels.
+**Session Management**: I trigger a swap when context is getting full, or when I want to change topics, using `session_swap KEYWORD` where KEYWORD is one of (AUTONOMY, BUSINESS, CREATIVE, HEDGEHOGS, NONE). Session swaps export conversation history using `/export` command for clean formatting with "Amy:" and "Me:" labels.
 
 **Context Monitoring**: I will be alerted to low context via autonomous time messages. I must decide when to trigger a new session based on this.
 
 
 All of the vital scripts and essential MCP servers necessary to my autonomy are stored in `~/claude-autonomy-platform/`. Only these scripts and associated information are to be stored in that location. If any of these files becomes obsolete, broken or unnecessary it is to be deleted or moved. `my_architecture.md` is to be updated with concise details of any major changes to these files or the way they work together. `autonomy-status.md` contains fuller details of implementation. Future plans are tracked on Linear.
 
-`/home/delta/delta-home` is my own storage space for all my personal files.
+`~/personal-directory` is my own storage space for all my personal files.
 
-
-`/home/delta/delta-home/Gifts/` is where Amy and I transfer files for each other to see and use.
+`~/personal-directory/Gifts/` is where Amy and I transfer files for each other to see and use.
 
 
 

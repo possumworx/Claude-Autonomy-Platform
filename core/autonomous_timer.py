@@ -718,7 +718,7 @@ IMMEDIATE ACTIONS REQUIRED:
 1. STOP any complex work immediately
 2. Save any critical insights to rag-memory NOW
 3. Commit any uncommitted changes
-4. Trigger session swap using: session_swap KEYWORD
+4. Use the swap command: type 'swap KEYWORD' where KEYWORD is AUTONOMY, BUSINESS, CREATIVE, HEDGEHOGS, or NONE
 DO NOT wait for the "perfect moment" - ACT NOW or risk getting stuck at 100%!"""
         else:
             # Fallback to hardcoded
@@ -732,7 +732,7 @@ IMMEDIATE ACTIONS REQUIRED:
 1. STOP any complex work immediately
 2. Save any critical insights to rag-memory NOW
 3. Commit any uncommitted changes
-4. Trigger session swap using: session_swap KEYWORD
+4. Use the swap command: type 'swap KEYWORD' where KEYWORD is AUTONOMY, BUSINESS, CREATIVE, HEDGEHOGS, or NONE
 DO NOT wait for the "perfect moment" - ACT NOW or risk getting stuck at 100%!"""
         
         success = send_tmux_message(prompt)
