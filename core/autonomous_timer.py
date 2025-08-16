@@ -406,7 +406,7 @@ def clear_error_state():
 def update_discord_status(status_type, reset_time=None):
     """Call edit_status command to update Discord bot status"""
     try:
-        cmd = [str(AUTONOMY_DIR / "utils" / "edit_status"), status_type]
+        cmd = [str(AUTONOMY_DIR / "discord" / "edit_status"), status_type]
         if reset_time:
             cmd.append(reset_time)
         

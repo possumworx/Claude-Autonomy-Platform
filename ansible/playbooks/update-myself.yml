@@ -1,0 +1,107 @@
+---
+# Update local Claude system with latest infrastructure changes
+# Run this to synchronize with the latest captured state
+
+- name: Update Claude Infrastructure
+  hosts: localhost
+  connection: local
+  
+  tasks:
+    - name: Update git repository
+      git:
+        repo: 'https://github.com/possumwor/claude-autonomy-platform.git'
+        dest: "{{ ansible_env.HOME }}/claude-autonomy-platform"
+        update: yes
+      register: git_result
+    
+    - name: Create ~/bin directory if it doesn't exist
+      file:
+        path: "{{ ansible_env.HOME }}/bin"
+        state: directory
+        mode: '0755'
+    
+    - name: Find captured bin scripts
+      find:
+        paths: "{{ playbook_dir }}/../configs/bin"
+        file_type: file
+      register: captured_bin_files
+    
+    - name: Sync ~/bin scripts
+      copy:
+        src: "{{ item.path }}"
+        dest: "{{ ansible_env.HOME }}/bin/{{ item.path | basename }}"
+        mode: '0755'
+      loop: "{{ captured_bin_files.files }}"
+      when: 
+        - captured_bin_files.files is defined
+        - item.path | basename != 'symlinks.txt'
+    
+    - name: Check if symlinks.txt exists
+      stat:
+        path: "{{ playbook_dir }}/../configs/bin/symlinks.txt"
+      register: symlinks_file
+    
+    - name: Recreate symlinks in ~/bin
+      shell: |
+        while IFS=':' read -r link_name target_path; do
+          if [ -n "$link_name" ] && [ -n "$target_path" ]; then
+            # Expand ~ to actual home directory
+            expanded_path=$(echo "$target_path" | sed "s|^~|$HOME|")
+            ln -sf "$expanded_path" "{{ ansible_env.HOME }}/bin/$link_name"
+          fi
+        done < "{{ playbook_dir }}/../configs/bin/symlinks.txt"
+      when: symlinks_file.stat.exists
+    
+    - name: Check if claude_aliases.sh exists
+      stat:
+        path: "{{ playbook_dir }}/../configs/bashrc/claude_aliases.sh"
+      register: aliases_file
+    
+    - name: Ensure Claude aliases are in .bashrc
+      blockinfile:
+        path: "{{ ansible_env.HOME }}/.bashrc"
+        block: "{{ lookup('file', playbook_dir + '/../configs/bashrc/claude_aliases.sh') }}"
+        marker: "# {mark} ANSIBLE MANAGED CLAUDE ALIASES"
+        create: yes
+      when: aliases_file.stat.exists
+    
+    - name: Read list of Claude services
+      slurp:
+        src: "{{ playbook_dir }}/../configs/services/claude_services.list"
+      register: services_list
+      ignore_errors: yes
+    
+    - name: Restart Claude services
+      systemd:
+        name: "{{ item }}"
+        state: restarted
+        scope: user
+        daemon_reload: yes
+      loop: "{{ (services_list.content | b64decode).splitlines() }}"
+      when: 
+        - services_list is defined
+        - services_list.content is defined
+      ignore_errors: yes
+    
+    - name: Fix bashrc sourcing for non-interactive shells
+      lineinfile:
+        path: "{{ ansible_env.HOME }}/.bash_profile"
+        line: "[ -f ~/.bashrc ] && source ~/.bashrc"
+        create: yes
+    
+    - name: Also add to .profile for broader compatibility  
+      lineinfile:
+        path: "{{ ansible_env.HOME }}/.profile"
+        line: "[ -f ~/.bashrc ] && . ~/.bashrc"
+        create: yes
+    
+    - name: Display update summary
+      debug:
+        msg: |
+          Update completed!
+          - Git repository: {{ 'Updated' if git_result.changed else 'Already up-to-date' }}
+          - Scripts synced to ~/bin: {{ captured_bin_files.files | length }}
+          - Aliases updated in .bashrc
+          - Services restarted: {{ (services_list.content | b64decode).splitlines() | length if services_list.content is defined else 0 }}
+          
+          Your system is now synchronized with the latest infrastructure!

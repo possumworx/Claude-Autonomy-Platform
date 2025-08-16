@@ -1,0 +1,10 @@
+# Captured configs - these are generated and should not be committed
+# They may contain hardcoded paths specific to each Claude
+configs/
+
+# Ansible retry files
+*.retry
+
+# Python cache
+__pycache__/
+*.pyc

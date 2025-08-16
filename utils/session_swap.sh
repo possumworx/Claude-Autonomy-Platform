@@ -38,6 +38,10 @@ echo "[SESSION_SWAP] Backup complete!"
 # Return to CLAP directory after git operations
 cd "$CLAP_DIR"
 
+# Check for infrastructure updates (optional during session swap)
+echo "[SESSION_SWAP] Checking for infrastructure updates..."
+"$SCRIPT_DIR/../ansible/check-and-update.sh"
+
 echo "[SESSION_SWAP] Exporting current conversation..."
 # First ensure Claude is in the correct directory using shell command
 tmux send-keys -t autonomous-claude '!'
